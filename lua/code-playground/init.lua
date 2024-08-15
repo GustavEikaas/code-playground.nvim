@@ -6,7 +6,7 @@ local function createStdoutBuf()
   vim.api.nvim_set_current_buf(outBuf)
   vim.api.nvim_win_set_width(0, 30)
   vim.api.nvim_buf_set_option(outBuf, 'modifiable', false)
-  vim.api.nvim_buf_set_option(outBuf, "filetype", "Code-stdout")
+  vim.api.nvim_buf_set_option(outBuf, "filetype", "code-stdout")
   return {
     write = function(lines)
       vim.api.nvim_buf_set_option(outBuf, 'modifiable', true)
@@ -17,14 +17,14 @@ local function createStdoutBuf()
 end
 
 local function ensureTemplateFilesCreated()
-  local fileutils = require("ts-playground.file-utils")
-  local root = vim.fs.joinpath(vim.fn.stdpath("data"), "ts-playground")
+  local fileutils = require("code-playground.file-utils")
+  local root = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground")
   fileutils.ensure_directory_exists(root)
 
   local ts_folder = vim.fs.joinpath(root, "typescript")
   fileutils.ensure_directory_exists(ts_folder)
-  local index = vim.fs.joinpath(vim.fn.stdpath("data"), "ts-playground", "index.ts")
-  local tsconfig = vim.fs.joinpath(vim.fn.stdpath("data"), "ts-playground", "tsconfig.json")
+  local index = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "index.ts")
+  local tsconfig = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "tsconfig.json")
   fileutils.ensure_file_exists(index, "typescript/index.ts")
   fileutils.ensure_file_exists(tsconfig, "typescript/tsconfig.json")
 
@@ -169,17 +169,17 @@ M.setup = function()
   ensureTemplateFilesCreated()
   local commands = {
     dotnet = function()
-      local project = vim.fs.joinpath(vim.fn.stdpath("data"), "ts-playground", "dotnet", "dotnet.csproj")
-      local program = vim.fs.joinpath(vim.fn.stdpath("data"), "ts-playground", "dotnet", "Program.cs")
+      local project = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "dotnet", "dotnet.csproj")
+      local program = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "dotnet", "Program.cs")
       dotnet(program, project)
     end,
     typescript = function()
-      local indexPath = vim.fs.joinpath(vim.fn.stdpath("data"), "ts-playground", "typescript", "index.ts")
+      local indexPath = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "typescript", "index.ts")
       ts(indexPath)
     end,
     rust = function()
-      local indexPath = vim.fs.joinpath(vim.fn.stdpath("data"), "ts-playground", "rust", "src", "main.rs")
-      local cargo = vim.fs.joinpath(vim.fn.stdpath("data"), "ts-playground", "rust", "Cargo.toml")
+      local indexPath = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "rust", "src", "main.rs")
+      local cargo = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "rust", "Cargo.toml")
       rust(indexPath, cargo)
     end
   }
