@@ -38,6 +38,22 @@ M.open_file_in_same_directory = function(filename)
   return content
 end
 
+M.overwrite_file = function(filepath, templateName)
+  local file = io.open(filepath, "r")
+    -- File doesn't exist, create it
+    file = io.open(filepath, "w")
+    if file == nil then
+      print("Failed to create the file: " .. filepath)
+      return
+    end
+    local content = M.open_file_in_same_directory("templates/" .. templateName)
+    if content then
+      file:write(content)
+    end
+
+    file:close()
+end
+
 M.ensure_file_exists = function(filepath, templateName)
   local file = io.open(filepath, "r")
   if file then
