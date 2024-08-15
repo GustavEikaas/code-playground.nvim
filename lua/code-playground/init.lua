@@ -23,8 +23,8 @@ local function ensureTemplateFilesCreated()
 
   local ts_folder = vim.fs.joinpath(root, "typescript")
   fileutils.ensure_directory_exists(ts_folder)
-  local index = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "index.ts")
-  local tsconfig = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "tsconfig.json")
+  local index = vim.fs.joinpath(ts_folder, "index.ts")
+  local tsconfig = vim.fs.joinpath(ts_folder, "tsconfig.json")
   fileutils.ensure_file_exists(index, "typescript/index.ts")
   fileutils.ensure_file_exists(tsconfig, "typescript/tsconfig.json")
 
@@ -48,7 +48,6 @@ end
 
 
 local function dotnet(program, projectFile)
-  vim.notify(program)
   vim.cmd("edit! " .. program)
   local buf = vim.api.nvim_get_current_buf()
   vim.cmd("vsplit")
