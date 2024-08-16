@@ -11,6 +11,8 @@ Currently, the plugin supports the following languages:
 - Rust
 
 More languages will be supported in future updates!
+- Zig
+- Python
 
 ## Features
 
