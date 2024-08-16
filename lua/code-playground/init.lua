@@ -75,8 +75,15 @@ local function ensureTemplateFilesCreated()
   local main_java = vim.fs.joinpath(java_folder, "Main.java")
   fileutils.ensure_file_exists(main_java, "java/Main.java")
 
+  local haskell_folder = vim.fs.joinpath(root, "haskell")
+  fileutils.ensure_directory_exists(haskell_folder)
+  local main_haskell = vim.fs.joinpath(haskell_folder, "main.hs")
+  fileutils.ensure_file_exists(main_haskell, "haskell/main.hs")
+
   return index
 end
+
+
 
 local function open_workspace(file, command)
   vim.cmd("edit! " .. file)
@@ -159,6 +166,11 @@ M.setup = function()
       local main = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "odin", "main.odin")
       open_workspace(main, string.format("odin run %s -file", main))
     end,
+    haskell = function()
+      local main = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "haskell", "main.hs")
+      open_workspace(main, string.format("runghc %s", main))
+    end,
+
   }
 
   vim.api.nvim_create_user_command('Code',

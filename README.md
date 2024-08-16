@@ -15,6 +15,7 @@ Currently, the plugin supports the following languages:
 - F#
 - Go
 - Odin
+- Haskell
 
 More languages will be supported in future updates!
 
@@ -74,6 +75,7 @@ To run code in a specific language:
   Code go
   Code fsharp
   Code odin
+  Code haskell
   ```
 
 ## Configuration
