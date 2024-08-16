@@ -13,6 +13,8 @@ Currently, the plugin supports the following languages:
 - Python
 - Java
 - F#
+- Go
+- Odin
 
 More languages will be supported in future updates!
 
@@ -44,8 +46,6 @@ To run code in a specific language:
 
 1. Open the command prompt in Neovim by pressing `:`.
 
-2. Type the following command, replacing `<language>` with either `dotnet`, `typescript`, `python`, `zig` or `rust`:
-
    ```vim
    :Code <language>
    ```
@@ -56,9 +56,9 @@ To run code in a specific language:
    :Code dotnet
    ```
 
-3. A new buffer will open. Type your code in this buffer.
+2. A new buffer will open. Type your code in this buffer.
 
-4. Save the buffer using `:w` or `Ctrl+s`. The plugin will automatically execute your code, and the output will be displayed.
+3. Save the buffer using `:w` or `Ctrl+s`. The plugin will automatically execute your code, and the output will be displayed.
 
 ### Commands
 
@@ -66,10 +66,14 @@ To run code in a specific language:
 
   ```vim
   Code dotnet
+  Code typescript
   Code rust
   Code zig
   Code python
-  Code typescript
+  Code java
+  Code go
+  Code fsharp
+  Code odin
   ```
 
 ## Configuration

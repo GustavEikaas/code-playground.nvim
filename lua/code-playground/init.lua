@@ -60,6 +60,16 @@ local function ensureTemplateFilesCreated()
   local main_zig = vim.fs.joinpath(zig_folder, "main.zig")
   fileutils.ensure_file_exists(main_zig, "zig/main.zig")
 
+  local go_folder = vim.fs.joinpath(root, "go")
+  fileutils.ensure_directory_exists(go_folder)
+  local main_go = vim.fs.joinpath(go_folder, "main.go")
+  fileutils.ensure_file_exists(main_go, "go/main.go")
+
+  local odin_folder = vim.fs.joinpath(root, "odin")
+  fileutils.ensure_directory_exists(odin_folder)
+  local main_odin = vim.fs.joinpath(odin_folder, "main.odin")
+  fileutils.ensure_file_exists(main_odin, "odin/main.odin")
+
   local java_folder = vim.fs.joinpath(root, "java")
   fileutils.ensure_directory_exists(java_folder)
   local main_java = vim.fs.joinpath(java_folder, "Main.java")
@@ -88,7 +98,7 @@ local function open_workspace(file, command)
           table.insert(lines, value)
         end
       end,
-      on_exit = function(_, b)
+      on_exit = function()
         stdout.write(lines)
         lines = {}
       end
@@ -140,8 +150,15 @@ M.setup = function()
     java = function()
       local main = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "java", "Main.java")
       open_workspace(main, string.format("java %s", main))
-    end
-
+    end,
+    go = function()
+      local main = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "go", "main.go")
+      open_workspace(main, string.format("go run %s", main))
+    end,
+    odin = function()
+      local main = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "odin", "main.odin")
+      open_workspace(main, string.format("odin run %s -file", main))
+    end,
   }
 
   vim.api.nvim_create_user_command('Code',
