@@ -1,5 +1,9 @@
 # CodeRunner.nvim
 
+
+https://github.com/user-attachments/assets/ef4002a9-c676-4de4-810c-6e144c5ba77c
+
+
 ## Description
 
 **CodeRunner.nvim** is a simple yet powerful Neovim plugin that allows you to run code in the language of your choosing directly within Neovim. When invoked, it opens a buffer in the selected language where you can type your code. Upon saving the buffer, the plugin automatically runs your code and displays the output. 
