@@ -9,10 +9,10 @@ Currently, the plugin supports the following languages:
 - .NET (C#)
 - TypeScript
 - Rust
-
-More languages will be supported in future updates!
 - Zig
 - Python
+
+More languages will be supported in future updates!
 
 ## Features
 
@@ -42,7 +42,7 @@ To run code in a specific language:
 
 1. Open the command prompt in Neovim by pressing `:`.
 
-2. Type the following command, replacing `<language>` with either `dotnet`, `typescript`, or `rust`:
+2. Type the following command, replacing `<language>` with either `dotnet`, `typescript`, `python`, `zig` or `rust`:
 
    ```vim
    :Code <language>
@@ -65,6 +65,8 @@ To run code in a specific language:
   ```vim
   Code dotnet
   Code rust
+  Code zig
+  Code python
   Code typescript
   ```
 

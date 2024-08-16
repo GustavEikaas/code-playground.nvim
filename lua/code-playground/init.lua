@@ -43,72 +43,42 @@ local function ensureTemplateFilesCreated()
   fileutils.ensure_file_exists(cargo, "rust/Cargo.toml")
   fileutils.ensure_file_exists(main, "rust/src/main.rs")
 
+  local python_folder = vim.fs.joinpath(root, "python")
+  fileutils.ensure_directory_exists(python_folder)
+  local main_py = vim.fs.joinpath(python_folder, "main.py")
+  fileutils.ensure_file_exists(main_py, "python/main.py")
+
+  local zig_folder = vim.fs.joinpath(root, "zig")
+  fileutils.ensure_directory_exists(zig_folder)
+  local main_zig = vim.fs.joinpath(zig_folder, "main.zig")
+  fileutils.ensure_file_exists(main_zig, "zig/main.zig")
+
   return index
 end
 
-
-local function dotnet(program, projectFile)
-  vim.cmd("edit! " .. program)
-  local buf = vim.api.nvim_get_current_buf()
-  vim.cmd("vsplit")
-  local stdout = createStdoutBuf()
-
-  local function run()
-    local errLines = {}
-    vim.fn.jobstart(string.format("dotnet run --project %s", projectFile), {
-      stdout_buffered = true,
-      on_stdout = function(_, data)
-        stdout.write(data)
-      end,
-      on_stderr = function(_, data)
-        for _, value in ipairs(data) do
-          table.insert(errLines, value)
-        end
-      end,
-      on_exit = function(_, b)
-        if b ~= 0 then
-          stdout.write(errLines)
-        end
-        errLines = {}
-      end
-
-    })
-    stdout.write({ "Executing..." })
-  end
-
-  vim.keymap.set('n', '<leader>r', run, { buffer = buf, noremap = true, silent = true })
-
-  vim.api.nvim_create_autocmd("BufWritePost", {
-    buffer = buf,
-    callback = run,
-  })
-
-  vim.cmd("wincmd h")
-end
-
-local function rust(file, cargo)
+local function open_workspace(file, command)
   vim.cmd("edit! " .. file)
   local buf = vim.api.nvim_get_current_buf()
   vim.cmd("vsplit")
   local stdout = createStdoutBuf()
+
   local function run()
-    local errLines = {}
-    local command = string.format("cargo run --manifest-path %s", cargo)
+    local lines = {}
     vim.fn.jobstart(command, {
       stdout_buffered = true,
       on_stdout = function(_, data)
-        stdout.write(data)
+        for _, value in ipairs(data) do
+          table.insert(lines, value)
+        end
       end,
       on_stderr = function(_, data)
         for _, value in ipairs(data) do
-          table.insert(errLines, value)
+          table.insert(lines, value)
         end
       end,
       on_exit = function(_, b)
-        if b ~= 0 then
-          stdout.write(errLines)
-        end
-        errLines = {}
+        stdout.write(lines)
+        lines = {}
       end
     })
     stdout.write({ "Executing..." })
@@ -124,45 +94,6 @@ local function rust(file, cargo)
   vim.cmd("wincmd h")
 end
 
-
-local function ts(indexPath)
-  vim.cmd("edit! " .. indexPath)
-  local buf = vim.api.nvim_get_current_buf()
-  vim.cmd("vsplit")
-  local stdout = createStdoutBuf()
-  local function run()
-    local errLines = {}
-    vim.fn.jobstart(string.format("bun %s", indexPath), {
-      stdout_buffered = true,
-      on_stdout = function(_, data)
-        stdout.write(data)
-      end,
-      on_stderr = function(_, data)
-        for _, value in ipairs(data) do
-          table.insert(errLines, value)
-        end
-      end,
-      on_exit = function(_, b)
-        if b ~= 0 then
-          stdout.write(errLines)
-        end
-        errLines = {}
-      end
-
-    })
-    stdout.write({ "Executing..." })
-  end
-
-  vim.keymap.set('n', '<leader>r', run, { buffer = buf, noremap = true, silent = true })
-
-  vim.api.nvim_create_autocmd("BufWritePost", {
-    buffer = buf,
-    callback = run,
-  })
-
-
-  vim.cmd("wincmd h")
-end
 
 M.setup = function()
   ensureTemplateFilesCreated()
@@ -170,16 +101,24 @@ M.setup = function()
     dotnet = function()
       local project = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "dotnet", "dotnet.csproj")
       local program = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "dotnet", "Program.cs")
-      dotnet(program, project)
+      open_workspace(program, string.format("dotnet run --project %s", project))
     end,
     typescript = function()
       local indexPath = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "typescript", "index.ts")
-      ts(indexPath)
+      open_workspace(indexPath, string.format("bun %s", indexPath))
     end,
     rust = function()
       local indexPath = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "rust", "src", "main.rs")
       local cargo = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "rust", "Cargo.toml")
-      rust(indexPath, cargo)
+      open_workspace(indexPath, string.format("cargo run --manifest-path %s", cargo))
+    end,
+    python = function()
+      local main = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "python", "main.py")
+      open_workspace(main, string.format("python %s", main))
+    end,
+    zig = function()
+      local main = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "zig", "main.zig")
+      open_workspace(main, string.format("zig run %s", main))
     end
   }
 
