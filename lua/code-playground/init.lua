@@ -35,6 +35,13 @@ local function ensureTemplateFilesCreated()
   fileutils.ensure_file_exists(csproj, "dotnet/dotnet.csproj")
   fileutils.ensure_file_exists(program, "dotnet/Program.cs")
 
+  local fsharp_folder = vim.fs.joinpath(root, "fsharp")
+  fileutils.ensure_directory_exists(fsharp_folder)
+  local fsproj = vim.fs.joinpath(fsharp_folder, "fsharp.fsproj")
+  local program_f = vim.fs.joinpath(fsharp_folder, "Program.fs")
+  fileutils.ensure_file_exists(fsproj, "fsharp/fsharp.fsproj")
+  fileutils.ensure_file_exists(program_f, "fsharp/Program.fs")
+
   local rust_folder = vim.fs.joinpath(root, "rust")
   fileutils.ensure_directory_exists(rust_folder)
   local cargo = vim.fs.joinpath(rust_folder, "Cargo.toml")
@@ -52,6 +59,11 @@ local function ensureTemplateFilesCreated()
   fileutils.ensure_directory_exists(zig_folder)
   local main_zig = vim.fs.joinpath(zig_folder, "main.zig")
   fileutils.ensure_file_exists(main_zig, "zig/main.zig")
+
+  local java_folder = vim.fs.joinpath(root, "java")
+  fileutils.ensure_directory_exists(java_folder)
+  local main_java = vim.fs.joinpath(java_folder, "Main.java")
+  fileutils.ensure_file_exists(main_java, "java/Main.java")
 
   return index
 end
@@ -103,6 +115,11 @@ M.setup = function()
       local program = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "dotnet", "Program.cs")
       open_workspace(program, string.format("dotnet run --project %s", project))
     end,
+    fsharp = function()
+      local project = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "fsharp", "fsharp.fsproj")
+      local program = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "fsharp", "Program.fs")
+      open_workspace(program, string.format("dotnet run --project %s", project))
+    end,
     typescript = function()
       local indexPath = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "typescript", "index.ts")
       open_workspace(indexPath, string.format("bun %s", indexPath))
@@ -119,7 +136,12 @@ M.setup = function()
     zig = function()
       local main = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "zig", "main.zig")
       open_workspace(main, string.format("zig run %s", main))
+    end,
+    java = function()
+      local main = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground", "java", "Main.java")
+      open_workspace(main, string.format("java %s", main))
     end
+
   }
 
   vim.api.nvim_create_user_command('Code',

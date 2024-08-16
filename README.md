@@ -11,6 +11,8 @@ Currently, the plugin supports the following languages:
 - Rust
 - Zig
 - Python
+- Java
+- F#
 
 More languages will be supported in future updates!
 
