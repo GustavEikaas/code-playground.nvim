@@ -5,6 +5,7 @@ local java = require("code-playground.languages.java")
 local zig = require("code-playground.languages.zig")
 local typescript = require("code-playground.languages.typescript")
 local fsharp = require("code-playground.languages.fsharp")
+local options = require("code-playground.options")
 ---@class Command
 ---@field subcommands table<string,Command> | nil
 ---@field handle nil | fun(args: table<string>|string, options: table): nil
@@ -17,13 +18,26 @@ local function createStdoutBuf()
 	local outBuf = vim.api.nvim_create_buf(false, true) -- false for not listing, true for scratch
 	vim.api.nvim_win_set_buf(0, outBuf)
 	vim.api.nvim_set_current_buf(outBuf)
-	vim.api.nvim_win_set_width(0, 30)
+	if options.options.split_direction == "vsplit" then
+		vim.api.nvim_win_set_width(0, 30)
+		vim.cmd("wincmd h")
+	else
+		local ui = vim.api.nvim_list_uis()[1]
+		local height = math.floor(ui.height * 0.2)
+		vim.api.nvim_win_set_height(0, height)
+		vim.cmd("wincmd k")
+	end
 	vim.api.nvim_buf_set_option(outBuf, "modifiable", false)
 	vim.api.nvim_buf_set_option(outBuf, "filetype", "code-stdout")
 	return {
-		write = function(lines)
+		write = function(lines, failed)
 			vim.api.nvim_buf_set_option(outBuf, "modifiable", true)
 			vim.api.nvim_buf_set_lines(outBuf, 0, -1, true, lines)
+			if failed == true then
+				for i, _ in ipairs(lines) do
+					vim.api.nvim_buf_add_highlight(outBuf, 99, "ErrorMsg", i - 1, 0, -1)
+				end
+			end
 			vim.api.nvim_buf_set_option(outBuf, "modifiable", false)
 		end,
 	}
@@ -32,7 +46,7 @@ end
 local function open_workspace(file, command)
 	vim.cmd("edit! " .. file)
 	local buf = vim.api.nvim_get_current_buf()
-	vim.cmd("vsplit")
+	vim.cmd(options.options.split_direction)
 	local stdout = createStdoutBuf()
 
 	local function run()
@@ -49,8 +63,11 @@ local function open_workspace(file, command)
 					table.insert(lines, value)
 				end
 			end,
-			on_exit = function()
-				stdout.write(lines)
+			on_exit = function(_, code)
+				if code ~= 0 then
+					table.insert(lines, "CODE: " .. code)
+				end
+				stdout.write(lines, code ~= 0)
 				lines = {}
 			end,
 		})

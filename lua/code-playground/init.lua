@@ -81,7 +81,8 @@ local function split_by_whitespace(str)
 	return str and vim.iter(str:gmatch("%S+")):totable() or {}
 end
 
-M.setup = function()
+M.setup = function(options)
+	require("code-playground.options").set_options(options)
 	vim.api.nvim_create_user_command("Code", function(commandOpts)
 		local args = split_by_whitespace(commandOpts.fargs[1])
 		local command = args[1]
