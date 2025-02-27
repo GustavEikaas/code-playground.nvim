@@ -80,8 +80,6 @@ local function open_workspace(file, command)
 		buffer = buf,
 		callback = run,
 	})
-
-	vim.cmd("wincmd h")
 end
 
 local dotnet = require("code-playground.languages.dotnet")
