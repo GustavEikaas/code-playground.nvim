@@ -1,5 +1,5 @@
 local fileutils = require("code-playground.file-utils")
-local root_path = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground")
+local root_path = vim.fs.joinpath(vim.fs.normalize(vim.fn.stdpath("data")), "code-playground")
 local rust_folder = vim.fs.joinpath(root_path, "rust")
 local cargo = vim.fs.joinpath(rust_folder, "Cargo.toml")
 local main = vim.fs.joinpath(rust_folder, "src", "main.rs")
