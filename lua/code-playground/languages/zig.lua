@@ -1,5 +1,5 @@
 local fileutils = require("code-playground.file-utils")
-local root_path = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground")
+local root_path = vim.fs.joinpath(vim.fs.normalize(vim.fn.stdpath("data")), "code-playground")
 local zig_folder = vim.fs.joinpath(root_path, "zig")
 local main_zig = vim.fs.joinpath(zig_folder, "main.zig")
 
