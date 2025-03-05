@@ -14,31 +14,80 @@ local options = require("code-playground.options")
 ---@type table<string,Command>
 local M = {}
 
-local function createStdoutBuf()
-	local outBuf = vim.api.nvim_create_buf(false, true) -- false for not listing, true for scratch
-	vim.api.nvim_win_set_buf(0, outBuf)
-	vim.api.nvim_set_current_buf(outBuf)
+local function spawn_buf(stdoutBuf)
 	if options.options.split_direction == "vsplit" then
-		vim.api.nvim_win_set_width(0, 30)
+		vim.cmd("vsplit")
+		local win = vim.api.nvim_get_current_win()
+		vim.api.nvim_win_set_width(win, 30)
+		vim.api.nvim_win_set_buf(win, stdoutBuf)
+
 		vim.cmd("wincmd h")
 	else
 		local ui = vim.api.nvim_list_uis()[1]
 		local height = math.floor(ui.height * 0.2)
-		vim.api.nvim_win_set_height(0, height)
+		vim.cmd("split")
+		local win = vim.api.nvim_get_current_win()
+		vim.api.nvim_win_set_height(win, height)
+		vim.api.nvim_win_set_buf(win, stdoutBuf)
 		vim.cmd("wincmd k")
 	end
-	vim.api.nvim_buf_set_option(outBuf, "modifiable", false)
-	vim.api.nvim_buf_set_option(outBuf, "filetype", "code-stdout")
+end
+
+local function create_buf()
+	local stdoutBuf = vim.api.nvim_create_buf(false, true)
+	vim.api.nvim_buf_set_option(stdoutBuf, "modifiable", false)
+	vim.api.nvim_buf_set_option(stdoutBuf, "filetype", "code-stdout")
+	return stdoutBuf
+end
+
+local function is_buf_visible(buf)
+	for _, win in ipairs(vim.api.nvim_list_wins()) do
+		if vim.api.nvim_win_get_buf(win) == buf then
+			return true
+		end
+	end
+	return false
+end
+
+local function createStdoutBuf(buf)
+	local stdoutBuf = create_buf()
+	spawn_buf(stdoutBuf)
+
+	vim.api.nvim_create_autocmd("BufEnter", {
+		buffer = buf,
+		callback = function()
+			if not vim.api.nvim_buf_is_valid(stdoutBuf) or not is_buf_visible(stdoutBuf) then
+				if vim.api.nvim_buf_is_valid(stdoutBuf) then
+					vim.api.nvim_buf_delete(stdoutBuf, { force = true })
+				end
+				stdoutBuf = create_buf()
+				spawn_buf(stdoutBuf)
+			end
+		end,
+	})
+
+	vim.api.nvim_create_autocmd("BufLeave", {
+		buffer = buf,
+		callback = function()
+			vim.defer_fn(function()
+				local curr_buf = vim.api.nvim_get_current_buf()
+				if curr_buf ~= stdoutBuf then
+					vim.api.nvim_buf_delete(stdoutBuf, { force = true })
+				end
+			end, 10)
+		end,
+	})
+
 	return {
 		write = function(lines, failed)
-			vim.api.nvim_buf_set_option(outBuf, "modifiable", true)
-			vim.api.nvim_buf_set_lines(outBuf, 0, -1, true, lines)
+			vim.api.nvim_buf_set_option(stdoutBuf, "modifiable", true)
+			vim.api.nvim_buf_set_lines(stdoutBuf, 0, -1, true, lines)
 			if failed == true then
 				for i, _ in ipairs(lines) do
-					vim.api.nvim_buf_add_highlight(outBuf, 99, "ErrorMsg", i - 1, 0, -1)
+					vim.api.nvim_buf_add_highlight(stdoutBuf, 99, "ErrorMsg", i - 1, 0, -1)
 				end
 			end
-			vim.api.nvim_buf_set_option(outBuf, "modifiable", false)
+			vim.api.nvim_buf_set_option(stdoutBuf, "modifiable", false)
 		end,
 	}
 end
@@ -46,8 +95,7 @@ end
 local function open_workspace(file, command)
 	vim.cmd("edit! " .. file)
 	local buf = vim.api.nvim_get_current_buf()
-	vim.cmd(options.options.split_direction)
-	local stdout = createStdoutBuf()
+	local stdout = createStdoutBuf(buf)
 
 	local function run()
 		local lines = {}
