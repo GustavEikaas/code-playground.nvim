@@ -1,5 +1,5 @@
 local fileutils = require("code-playground.file-utils")
-local root_path = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground")
+local root_path = vim.fs.joinpath(vim.fs.normalize(vim.fn.stdpath("data")), "code-playground")
 local dotnet_folder = vim.fs.joinpath(root_path, "dotnet")
 local csproj = vim.fs.joinpath(dotnet_folder, "dotnet.csproj")
 local program = vim.fs.joinpath(dotnet_folder, "Program.cs")

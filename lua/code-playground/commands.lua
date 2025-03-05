@@ -35,8 +35,8 @@ end
 
 local function create_buf()
 	local stdoutBuf = vim.api.nvim_create_buf(false, true)
-	vim.api.nvim_buf_set_option(stdoutBuf, "modifiable", false)
-	vim.api.nvim_buf_set_option(stdoutBuf, "filetype", "code-stdout")
+	vim.bo[stdoutBuf].modifiable = false
+	vim.bo[stdoutBuf].filetype = "code-stdout"
 	return stdoutBuf
 end
 
@@ -80,14 +80,14 @@ local function createStdoutBuf(buf)
 
 	return {
 		write = function(lines, failed)
-			vim.api.nvim_buf_set_option(stdoutBuf, "modifiable", true)
+			vim.bo[stdoutBuf].modifiable = true
 			vim.api.nvim_buf_set_lines(stdoutBuf, 0, -1, true, lines)
 			if failed == true then
 				for i, _ in ipairs(lines) do
 					vim.api.nvim_buf_add_highlight(stdoutBuf, 99, "ErrorMsg", i - 1, 0, -1)
 				end
 			end
-			vim.api.nvim_buf_set_option(stdoutBuf, "modifiable", false)
+			vim.bo[stdoutBuf].modifiable = false
 		end,
 	}
 end

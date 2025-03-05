@@ -1,5 +1,5 @@
 local fileutils = require("code-playground.file-utils")
-local root_path = vim.fs.joinpath(vim.fn.stdpath("data"), "code-playground")
+local root_path = vim.fs.joinpath(vim.fs.normalize(vim.fn.stdpath("data")), "code-playground")
 local ts_folder = vim.fs.joinpath(root_path, "typescript")
 local index = vim.fs.joinpath(ts_folder, "index.ts")
 
