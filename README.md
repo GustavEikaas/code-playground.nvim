@@ -43,6 +43,20 @@ More languages will be supported in future updates!
 }
 ```
 
+### With options
+```lua
+-- lazy.nvim
+{
+  "GustavEikaas/code-playground.nvim",
+  config = function()
+    require("code-playground").setup({
+      split_direction = "vsplit" -- split | vsplit
+    })
+  end
+}
+```
+
+
 ## Usage
 
 ### Running code 
@@ -64,6 +78,13 @@ To run code in a specific language:
 2. A new buffer will open. Type your code in this buffer.
 
 3. Save the buffer using `:w` or `Ctrl+s`. The plugin will automatically execute your code, and the output will be displayed.
+
+
+### Resetting a workspace
+
+Run the command `Code <language> reset`.
+
+This will destroy the workspace and reinitialize it.
 
 ### Commands
 
