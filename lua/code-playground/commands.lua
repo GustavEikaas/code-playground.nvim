@@ -53,25 +53,12 @@ local function createStdoutBuf(buf)
 	local stdoutBuf = create_buf()
 	spawn_buf(stdoutBuf)
 
-	vim.api.nvim_create_autocmd("BufEnter", {
-		buffer = buf,
-		callback = function()
-			if not vim.api.nvim_buf_is_valid(stdoutBuf) or not is_buf_visible(stdoutBuf) then
-				if vim.api.nvim_buf_is_valid(stdoutBuf) then
-					vim.api.nvim_buf_delete(stdoutBuf, { force = true })
-				end
-				stdoutBuf = create_buf()
-				spawn_buf(stdoutBuf)
-			end
-		end,
-	})
-
 	vim.api.nvim_create_autocmd("BufLeave", {
 		buffer = buf,
 		callback = function()
 			vim.defer_fn(function()
 				local curr_buf = vim.api.nvim_get_current_buf()
-				if curr_buf ~= stdoutBuf then
+				if curr_buf ~= stdoutBuf and vim.api.nvim_buf_is_valid(stdoutBuf) then
 					vim.api.nvim_buf_delete(stdoutBuf, { force = true })
 				end
 			end, 10)
@@ -80,6 +67,15 @@ local function createStdoutBuf(buf)
 
 	return {
 		write = function(lines, failed)
+			--Recreate buffer if not ready
+			if not vim.api.nvim_buf_is_valid(stdoutBuf) or not is_buf_visible(stdoutBuf) then
+				if vim.api.nvim_buf_is_valid(stdoutBuf) then
+					vim.api.nvim_buf_delete(stdoutBuf, { force = true })
+				end
+				stdoutBuf = create_buf()
+				spawn_buf(stdoutBuf)
+			end
+
 			vim.bo[stdoutBuf].modifiable = true
 			vim.api.nvim_buf_set_lines(stdoutBuf, 0, -1, true, lines)
 			if failed == true then
