@@ -22,25 +22,6 @@ local function wrap(callback)
 	end
 end
 
-local function collect_commands_with_handles(parent, prefix)
-	return vim.iter(parent):fold({}, function(command_handles, name, command)
-		local full_command = prefix and (prefix .. "_" .. name) or name
-
-		if command.handle then
-			command_handles[full_command] = command.handle
-		end
-
-		if command.subcommands then
-			vim.iter(collect_commands_with_handles(command.subcommands, full_command))
-				:each(function(sub_name, sub_handle)
-					command_handles[sub_name] = sub_handle
-				end)
-		end
-
-		return command_handles
-	end)
-end
-
 local function collect_commands(parent, prefix)
 	return vim.iter(parent):fold({}, function(commands, name, command)
 		local full_command = prefix and (prefix .. " " .. name) or name
@@ -81,13 +62,27 @@ local function split_by_whitespace(str)
 	return str and vim.iter(str:gmatch("%S+")):totable() or {}
 end
 
+local function present_command_picker()
+	local all_commands = collect_commands(commands)
+	local options = vim.tbl_map(function(i)
+		return i
+	end, all_commands)
+
+	vim.ui.select(options, { prompt = "Select language" }, function(choice)
+    if not choice then
+      return
+    end
+		vim.cmd("Code " .. choice)
+	end)
+end
+
 M.setup = function(options)
 	require("code-playground.options").set_options(options)
 	vim.api.nvim_create_user_command("Code", function(commandOpts)
 		local args = split_by_whitespace(commandOpts.fargs[1])
 		local command = args[1]
 		if not command then
-			return
+			present_command_picker()
 		end
 		local subcommand = commands[command]
 		if subcommand then

@@ -92,6 +92,7 @@ This will destroy the workspace and reinitialize it.
 - To run C# (.NET) code:
 
   ```vim
+  Code
   Code dotnet
   Code typescript
   Code rust
