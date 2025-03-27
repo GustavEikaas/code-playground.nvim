@@ -6,7 +6,6 @@ local zig = require("code-playground.languages.zig")
 local typescript = require("code-playground.languages.typescript")
 local fsharp = require("code-playground.languages.fsharp")
 local options = require("code-playground.options")
-local vim = vim
 ---@class Command
 ---@field subcommands table<string,Command> | nil
 ---@field handle nil | fun(args: table<string>|string, options: table): nil
