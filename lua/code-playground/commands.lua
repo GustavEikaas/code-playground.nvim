@@ -89,6 +89,7 @@ local function createStdoutBuf(buf)
 end
 
 local function open_workspace(file, command)
+	local previous_cwd = vim.fn.getcwd()
 	vim.cmd("edit! " .. file)
 	local buf = vim.api.nvim_get_current_buf()
 	local stdout = createStdoutBuf(buf)
@@ -124,6 +125,22 @@ local function open_workspace(file, command)
 		buffer = buf,
 		callback = run,
 	})
+
+	if options.options.auto_change_cwd then
+		vim.api.nvim_create_autocmd("BufEnter", {
+			buffer = buf,
+			callback = function()
+				vim.cmd("cd " .. vim.fs.dirname(file))
+			end,
+		})
+
+		vim.api.nvim_create_autocmd("BufLeave", {
+			buffer = buf,
+			callback = function()
+				vim.cmd("cd " .. previous_cwd)
+			end,
+		})
+	end
 end
 
 local dotnet = require("code-playground.languages.dotnet")
