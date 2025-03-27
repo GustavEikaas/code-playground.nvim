@@ -23,7 +23,6 @@ local function wrap(callback)
 end
 
 local function collect_commands(parent, prefix)
-
 	return vim.iter(parent):fold({}, function(cmds, name, command)
 		local full_command = prefix and (prefix .. " " .. name) or name
 
@@ -70,9 +69,9 @@ local function present_command_picker()
 	end, all_commands)
 
 	vim.ui.select(options, { prompt = "Select language" }, function(choice)
-    if not choice then
-      return
-    end
+		if not choice then
+			return
+		end
 		vim.cmd("Code " .. choice)
 	end)
 end

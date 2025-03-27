@@ -7,7 +7,7 @@ local M = {}
 ---@type Options
 M.options = {
 	split_direction = "vsplit",
-  auto_change_cwd = false
+	auto_change_cwd = false,
 }
 
 local function merge_tables(default_options, user_options)
