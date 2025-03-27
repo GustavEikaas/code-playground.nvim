@@ -23,20 +23,21 @@ local function wrap(callback)
 end
 
 local function collect_commands(parent, prefix)
-	return vim.iter(parent):fold({}, function(commands, name, command)
+
+	return vim.iter(parent):fold({}, function(cmds, name, command)
 		local full_command = prefix and (prefix .. " " .. name) or name
 
 		if command.handle then
-			table.insert(commands, full_command)
+			table.insert(cmds, full_command)
 		end
 
 		if command.subcommands then
 			vim.iter(collect_commands(command.subcommands, full_command)):each(function(sub)
-				table.insert(commands, sub)
+				table.insert(cmds, sub)
 			end)
 		end
 
-		return commands
+		return cmds
 	end)
 end
 
