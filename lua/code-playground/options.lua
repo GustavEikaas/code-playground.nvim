@@ -9,7 +9,7 @@ local M = {}
 M.options = {
 	split_direction = "vsplit",
 	auto_change_cwd = false,
-  animation = "wave"
+	animation = "wave",
 }
 
 local function merge_tables(default_options, user_options)
