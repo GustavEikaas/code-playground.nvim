@@ -163,6 +163,8 @@ M.dotnet = {
 	},
 }
 
+M.csharp = M.dotnet
+
 M.go = {
 	handle = function()
 		local def = go.run()
