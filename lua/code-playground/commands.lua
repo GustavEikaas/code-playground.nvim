@@ -5,7 +5,8 @@ local java = require("code-playground.languages.java")
 local zig = require("code-playground.languages.zig")
 local typescript = require("code-playground.languages.typescript")
 local fsharp = require("code-playground.languages.fsharp")
-local options = require("code-playground.options")
+local options_manager = require("code-playground.options")
+local animation = require("code-playground.animations")
 ---@class Command
 ---@field subcommands table<string,Command> | nil
 ---@field handle nil | fun(args: table<string>|string, options: table): nil
@@ -15,7 +16,7 @@ local options = require("code-playground.options")
 local M = {}
 
 local function spawn_buf(stdoutBuf)
-	if options.options.split_direction == "vsplit" then
+	if options_manager.options.split_direction == "vsplit" then
 		vim.cmd("vsplit")
 		local win = vim.api.nvim_get_current_win()
 		vim.api.nvim_win_set_width(win, 30)
@@ -96,6 +97,11 @@ local function open_workspace(file, command)
 
 	local function run()
 		local lines = {}
+
+		local anim_timer = animation[options_manager.options.animation](function(frame)
+			stdout.write({ frame }, false)
+		end)
+
 		vim.fn.jobstart(command, {
 			stdout_buffered = true,
 			on_stdout = function(_, data)
@@ -109,6 +115,8 @@ local function open_workspace(file, command)
 				end
 			end,
 			on_exit = function(_, code)
+				anim_timer:stop()
+
 				if code ~= 0 then
 					table.insert(lines, "CODE: " .. code)
 				end
@@ -116,7 +124,6 @@ local function open_workspace(file, command)
 				lines = {}
 			end,
 		})
-		stdout.write({ "Executing..." })
 	end
 
 	vim.keymap.set("n", "<leader>r", run, { buffer = buf, noremap = true, silent = true })
@@ -126,7 +133,7 @@ local function open_workspace(file, command)
 		callback = run,
 	})
 
-	if options.options.auto_change_cwd then
+	if options_manager.options.auto_change_cwd then
 		vim.api.nvim_create_autocmd("BufEnter", {
 			buffer = buf,
 			callback = function()

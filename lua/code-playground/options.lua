@@ -1,6 +1,7 @@
 ---@class Options
 ---@field split_direction "vsplit" | "split"
 ---@field auto_change_cwd boolean
+---@field animation "wave" | "spinner"
 
 local M = {}
 
@@ -8,6 +9,7 @@ local M = {}
 M.options = {
 	split_direction = "vsplit",
 	auto_change_cwd = false,
+  animation = "wave"
 }
 
 local function merge_tables(default_options, user_options)

@@ -51,7 +51,8 @@ More languages will be supported in future updates!
   config = function()
     require("code-playground").setup({
       split_direction = "vsplit", -- split | vsplit
-      auto_change_cwd = false
+      auto_change_cwd = false,
+      animation = "wave" -- wave | spinner
     })
   end
 }
