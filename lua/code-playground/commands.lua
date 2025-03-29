@@ -7,6 +7,7 @@ local typescript = require("code-playground.languages.typescript")
 local fsharp = require("code-playground.languages.fsharp")
 local options_manager = require("code-playground.options")
 local animation = require("code-playground.animations")
+
 ---@class Command
 ---@field subcommands table<string,Command> | nil
 ---@field handle nil | fun(args: table<string>|string, options: table): nil
@@ -21,7 +22,6 @@ local function spawn_buf(stdoutBuf)
 		local win = vim.api.nvim_get_current_win()
 		vim.api.nvim_win_set_width(win, 30)
 		vim.api.nvim_win_set_buf(win, stdoutBuf)
-
 		vim.cmd("wincmd h")
 	else
 		local ui = vim.api.nvim_list_uis()[1]
@@ -59,7 +59,7 @@ local function createStdoutBuf(buf)
 		callback = function()
 			vim.defer_fn(function()
 				local curr_buf = vim.api.nvim_get_current_buf()
-				if curr_buf ~= stdoutBuf and vim.api.nvim_buf_is_valid(stdoutBuf) then
+				if curr_buf ~= stdoutBuf and vim.api.nvim_buf_is_valid(stdoutBuf) and curr_buf ~= buf then
 					vim.api.nvim_buf_delete(stdoutBuf, { force = true })
 				end
 			end, 10)
@@ -68,7 +68,6 @@ local function createStdoutBuf(buf)
 
 	return {
 		write = function(lines, failed)
-			--Recreate buffer if not ready
 			if not vim.api.nvim_buf_is_valid(stdoutBuf) or not is_buf_visible(stdoutBuf) then
 				if vim.api.nvim_buf_is_valid(stdoutBuf) then
 					vim.api.nvim_buf_delete(stdoutBuf, { force = true })
