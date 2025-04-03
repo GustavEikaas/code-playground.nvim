@@ -95,6 +95,7 @@ local function open_workspace(file, command)
 	local stdout = createStdoutBuf(buf)
 
 	local function run()
+    vim.cmd("w!")
 		local lines = {}
 
 		local anim_timer = animation[options_manager.options.animation](function(frame)
