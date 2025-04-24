@@ -77,6 +77,9 @@ local function present_command_picker()
 end
 
 M.setup = function(options)
+  local fileutils = require("code-playground.file-utils")
+	local root_path = vim.fs.joinpath(vim.fs.normalize(vim.fn.stdpath("data")), "code-playground")
+	fileutils.ensure_directory_exists(root_path)
 	require("code-playground.options").set_options(options)
 	vim.api.nvim_create_user_command("Code", function(commandOpts)
 		local args = split_by_whitespace(commandOpts.fargs[1])
