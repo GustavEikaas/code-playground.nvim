@@ -60,6 +60,8 @@ M.check = function()
   ensure_dep_installed({ "runghc", "-h" }, "https://www.haskell.org/get-started/")
   ensure_dep_installed({ "java", "-h" }, "https://www.java.com/en/download/manual.jsp")
   ensure_dep_installed({ "zig", "-h" }, "https://ziglang.org/learn/getting-started/")
+  vim.health.start("Plugin information")
+  vim.health.info("Playground path: " .. vim.fs.joinpath(vim.fs.normalize(vim.fn.stdpath("data")), "code-playground"))
 end
 
 return M
