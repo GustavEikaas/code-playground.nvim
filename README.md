@@ -20,6 +20,7 @@ Currently, the plugin supports the following languages:
 - Go
 - Odin
 - Haskell
+- Elixir
 
 More languages will be supported in future updates!
 
@@ -104,6 +105,7 @@ This will destroy the workspace and reinitialize it.
   Code fsharp
   Code odin
   Code haskell
+  Code elixir
   ```
 
 ## Configuration

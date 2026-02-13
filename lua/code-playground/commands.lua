@@ -5,6 +5,7 @@ local java = require("code-playground.languages.java")
 local zig = require("code-playground.languages.zig")
 local typescript = require("code-playground.languages.typescript")
 local fsharp = require("code-playground.languages.fsharp")
+local elixir = require("code-playground.languages.elixir")
 local options_manager = require("code-playground.options")
 local animation = require("code-playground.animations")
 
@@ -300,6 +301,21 @@ M.zig = {
 			handle = function()
 				zig.reset()
 				M.zig.handle("", {})
+			end,
+		},
+	},
+}
+
+M.elixir = {
+	handle = function()
+		local def = elixir.run()
+		open_workspace(def.file, def.command)
+	end,
+	subcommands = {
+		reset = {
+			handle = function()
+				elixir.reset()
+				M.elixir.handle("", {})
 			end,
 		},
 	},
